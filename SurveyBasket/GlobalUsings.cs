@@ -1,0 +1,14 @@
+﻿global using Microsoft.AspNetCore.Mvc;
+global using SurveyBasket.Models;
+global using SurveyBasket.Contracts;
+global using SurveyBasket.Services;
+global using SurveyBasket.Contracts.Requests;
+//global using SurveyBasket.Mapping;
+global using Mapster;
+global using SurveyBasket.Contracts.Responses;
+global using System.ComponentModel.DataAnnotations;
+global using FluentValidation;
+global using MapsterMapper;
+global using Microsoft.AspNetCore.Builder;
+global using System.Reflection;
+global using FluentValidation.AspNetCore;
