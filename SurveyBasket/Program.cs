@@ -1,10 +1,12 @@
 using FluentValidation.AspNetCore;
 using SurveyBasket;
+using SurveyBasket.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDependencies();
+//builder.Services.AddIdentityApiEndpoints<ApplicationUser>().AddEntityFrameworkStores<ApplicationDbContext>();
 
+builder.Services.AddDependencies(builder.Configuration);
 
 
 var app = builder.Build();
@@ -19,6 +21,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+//app.MapIdentityApi<ApplicationUser>();
 
 app.MapControllers();
 
