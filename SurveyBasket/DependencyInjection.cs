@@ -14,6 +14,16 @@ public static class DependencyInjection
     {
         services.AddControllers();
 
+        var allowedOrigins = configuration.GetSection("AllowedOrigins").Get<string[]>();
+
+        services.AddCors(options =>
+              options.AddDefaultPolicy(builder => 
+                  builder
+                          .WithOrigins(allowedOrigins!)
+                          .AllowAnyMethod()
+                          .AllowAnyHeader()) 
+        );
+
         services.AddAuthConfig(configuration);
 
         var connectionString = configuration.GetConnectionString("DefaultConnection") ??
