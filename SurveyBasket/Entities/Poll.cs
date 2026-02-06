@@ -1,6 +1,6 @@
 ﻿namespace SurveyBasket.Entities;
 
-public sealed class Poll
+public sealed class Poll : AuditableEntity
 {
     public int Id { get; set; }
 
@@ -9,5 +9,6 @@ public sealed class Poll
     public string Summary { get; set; } = string.Empty;
     public bool isPublished { get; set; }
     public DateOnly StartsAt { get; set; } 
-    public DateOnly EndsAt { get; set; } 
+    public DateOnly EndsAt { get; set; }
+
 }

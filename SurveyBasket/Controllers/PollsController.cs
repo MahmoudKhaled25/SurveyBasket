@@ -37,7 +37,7 @@ public class PollsController(IPollService pollService) : ControllerBase
     public async Task <IActionResult> Add([FromBody] PollRequest request,CancellationToken cancellationToken)
     {
         var newPool = await _pollService.AddAsync(request.Adapt<Poll>(),cancellationToken);
-        return CreatedAtAction(nameof(Get), new { id = newPool.Id }, newPool);
+        return CreatedAtAction(nameof(Get), new { id = newPool.Id }, newPool.Adapt<PollResponse>());
     }
     [HttpPut("{id}")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] PollRequest request,CancellationToken cancellationToken)
