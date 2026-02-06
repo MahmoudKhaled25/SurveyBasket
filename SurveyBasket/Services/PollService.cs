@@ -1,5 +1,9 @@
 ﻿
 
+using Azure.Core;
+using SurveyBasket.Contracts.Polls;
+using SurveyBasket.Errors;
+
 namespace SurveyBasket.Services;
 
 public class PollService(ApplicationDbContext context) : IPollService
@@ -8,22 +12,27 @@ public class PollService(ApplicationDbContext context) : IPollService
     public async Task<IEnumerable<Poll>> GetAllAsync(CancellationToken cancellationToken = default) => await _context.Polls.AsNoTracking().ToListAsync();
 
 
-    public async Task<Poll?> GetAsync(int id, CancellationToken cancellationToken = default) => await _context.Polls.FindAsync(id);
-
-
-    public async Task <Poll> AddAsync(Poll poll, CancellationToken cancellationToken = default)
+    public async Task<Result<PollResponse>> GetAsync(int id, CancellationToken cancellationToken = default)
     {
-        await _context.Polls.AddAsync(poll,cancellationToken);
-        await _context.SaveChangesAsync();
-        return poll;
+        var poll = await _context.Polls.FindAsync(id);
+        return poll is null ? Result.Failure<PollResponse>(PollErrors.PollNotFound) : Result.Success<PollResponse>(poll.Adapt<PollResponse>());
     }
 
-    public async Task<bool> UpdateAsync(int id, Poll poll,CancellationToken cancellationToken = default)
+
+    public async Task <PollResponse> AddAsync(PollRequest request, CancellationToken cancellationToken = default)
     {
-        var currentPoll = await GetAsync(id,cancellationToken);
+        var poll = request.Adapt<Poll>();
+        await _context.Polls.AddAsync(poll,cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+        return poll.Adapt<PollResponse>();
+    }
+
+    public async Task<Result> UpdateAsync(int id, PollRequest poll,CancellationToken cancellationToken = default)
+    {
+        var currentPoll =  await _context.Polls.FindAsync(id,cancellationToken);
         if (currentPoll == null)
         {
-            return false;
+            return Result.Failure(PollErrors.PollNotFound);
         }
         currentPoll.Title = poll.Title;
         currentPoll.Summary = poll.Summary;
@@ -32,28 +41,28 @@ public class PollService(ApplicationDbContext context) : IPollService
 
       await  _context.SaveChangesAsync(cancellationToken);
 
-        return true;
+        return Result.Success();
     }
-    public async Task <bool> DeleteAsync(int id,CancellationToken cancellationToken = default)
+    public async Task <Result> DeleteAsync(int id,CancellationToken cancellationToken = default)
     {
-        var currentPoll = await GetAsync(id,cancellationToken);
+        var currentPoll = await _context.Polls.FindAsync(id,cancellationToken);
         if (currentPoll == null)
         {
-            return false;
+            return Result.Failure(PollErrors.PollNotFound);
         }
         _context.Remove(currentPoll);
-     await  _context.SaveChangesAsync(cancellationToken);
-            return true;
+     await _context.SaveChangesAsync(cancellationToken);
+            return Result.Success();
     }
-    public async Task<bool> TogglePublishStatusAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<Result> TogglePublishStatusAsync(int id, CancellationToken cancellationToken = default)
     {
-        var currentPoll = await GetAsync(id, cancellationToken);
-        if(currentPoll == null)
-            return false;
+        var currentPoll = await _context.Polls.FindAsync(id, cancellationToken);
+        if (currentPoll == null)
+            return Result.Failure(PollErrors.PollNotFound);
 
         currentPoll.isPublished = !currentPoll.isPublished;
         await _context.SaveChangesAsync(cancellationToken);
-        return true;
+        return Result.Success();
     }
 
 
