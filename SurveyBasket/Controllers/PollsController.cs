@@ -1,6 +1,7 @@
 ﻿using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
 using SurveyBasket.Contracts.Polls;
+using SurveyBasket.Errors;
 
 namespace SurveyBasket.Controllers;
 
@@ -32,16 +33,24 @@ public class PollsController(IPollService pollService) : ControllerBase
 
     public async Task <IActionResult> Add([FromBody] PollRequest request,CancellationToken cancellationToken)
     {
-        var newPool = await _pollService.AddAsync(request,cancellationToken);
-        return CreatedAtAction(nameof(Get), new { id = newPool.Id }, newPool);
+        var result = await _pollService.AddAsync(request,cancellationToken);
+        return result.IsSuccess? 
+            CreatedAtAction(nameof(Get), new { id = result.Value.Id }, result.Value) : 
+            result.ToProblem(StatusCodes.Status409Conflict);
     }
     [HttpPut("{id}")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] PollRequest request,CancellationToken cancellationToken)
     {
         var result = await _pollService.UpdateAsync(id, request,cancellationToken);
-        return result.IsSuccess ? NoContent() : result.ToProblem(StatusCodes.Status400BadRequest);
+
+        if (result.IsSuccess)
+            return NoContent();
+
+        return result.Error.Equals(PollErrors.DuplicatedPollTitle)
+                ? result.ToProblem(StatusCodes.Status409Conflict)
+                : result.ToProblem(StatusCodes.Status404NotFound);
     }
-    [HttpDelete("{id}")]
+    [HttpDelete("{id}")]    
     public async Task<IActionResult> Delete([FromRoute] int id,CancellationToken cancellationToken)
     {
         var result = await _pollService.DeleteAsync(id);
