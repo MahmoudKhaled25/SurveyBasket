@@ -23,7 +23,7 @@ public class PollsController(IPollService pollService) : ControllerBase
     public async Task <IActionResult> Get([FromRoute] int id, CancellationToken cancellationToken)
     {
         var result = await _pollService.GetAsync(id);
-        return result.IsSuccess ? Ok(result.Value) : Problem(statusCode: StatusCodes.Status400BadRequest,title: result.Error.Code,detail: result.Error.Description);
+        return result.IsSuccess ? Ok(result.Value) : result.ToProblem(StatusCodes.Status400BadRequest);
 
 
     }
@@ -39,14 +39,14 @@ public class PollsController(IPollService pollService) : ControllerBase
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] PollRequest request,CancellationToken cancellationToken)
     {
         var result = await _pollService.UpdateAsync(id, request,cancellationToken);
-        return result.IsSuccess ? NoContent() : Problem(statusCode: StatusCodes.Status400BadRequest, title: result.Error.Code, detail: result.Error.Description);
+        return result.IsSuccess ? NoContent() : result.ToProblem(StatusCodes.Status400BadRequest);
     }
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete([FromRoute] int id,CancellationToken cancellationToken)
     {
         var result = await _pollService.DeleteAsync(id);
       
-            return result.IsSuccess ? NoContent() : Problem(statusCode : StatusCodes.Status400BadRequest,title: result.Error.Code,detail: result.Error.Description);
+            return result.IsSuccess ? NoContent() : result.ToProblem(StatusCodes.Status400BadRequest);
         
         
     }
@@ -54,7 +54,7 @@ public class PollsController(IPollService pollService) : ControllerBase
     public async Task<IActionResult> TogglePublish([FromRoute] int id, CancellationToken cancellationToken)
     {
         var result = await _pollService.TogglePublishStatusAsync(id, cancellationToken);
-        return result.IsSuccess ? NoContent() : Problem(statusCode: StatusCodes.Status400BadRequest, title: result.Error.Code, detail: result.Error.Description);
+        return result.IsSuccess ? NoContent() : result.ToProblem(StatusCodes.Status400BadRequest);
 
     }
 
