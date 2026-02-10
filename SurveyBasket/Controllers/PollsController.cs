@@ -35,7 +35,7 @@ public class PollsController(IPollService pollService) : ControllerBase
     {
         var result = await _pollService.AddAsync(request,cancellationToken);
         return result.IsSuccess? 
-            CreatedAtAction(nameof(Get), new { id = result.Value.Id }, result.Value) : 
+            CreatedAtAction(nameof(Get), new { id = result.Value!.Id }, result.Value) : 
             result.ToProblem(StatusCodes.Status409Conflict);
     }
     [HttpPut("{id}")]
