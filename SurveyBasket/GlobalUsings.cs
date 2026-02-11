@@ -18,3 +18,4 @@ global using SurveyBasket.Persistence;
 global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 global using SurveyBasket.Persistence.EntitiesConfigurations;
 global using SurveyBasket.Abstractions;
+global using SurveyBasket.Extensions;

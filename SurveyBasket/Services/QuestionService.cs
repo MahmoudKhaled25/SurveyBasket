@@ -26,6 +26,28 @@ public class QuestionService(ApplicationDbContext context) : IQuestionService
 
         return Result.Success<IEnumerable<QuestionResponse>>(questions);
     }
+    public async Task<Result<IEnumerable<QuestionResponse>>> GetAvaliableAsync(int PollId, string UserId, CancellationToken cancellationToken = default)
+    {
+        var hasVote = await _context.Votes.AnyAsync(x => x.PollId == PollId && x.UserId == UserId,cancellationToken);
+        if (hasVote)
+            return Result.Failure<IEnumerable<QuestionResponse>>(VoteErrors.DuplicatedVote);
+
+        var pollIsExist = await _context.Polls.AnyAsync(x => x.Id == PollId && x.isPublished && x.StartsAt <= DateOnly.FromDateTime(DateTime.UtcNow) && x.EndsAt >= DateOnly.FromDateTime(DateTime.UtcNow),cancellationToken);
+        if(!pollIsExist)
+            return Result.Failure<IEnumerable<QuestionResponse>>(PollErrors.PollNotFound);
+
+        var questions = await _context.Questions
+            .Where(x => x.IsActive && x.PollId == PollId)
+            .Include(x => x.Answers)
+            .Select(q => new QuestionResponse
+            (
+                q.Id, q.Content, q.Answers.Where(a => a.IsActive).Select(a => new Contracts.Answers.AnswerResponse (a.Id,a.Content)
+            )))
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+
+        return Result.Success<IEnumerable<QuestionResponse>>(questions);
+    }
 
     public async Task<Result<QuestionResponse>> GetAsync(int PollId, int id, CancellationToken cancellationToken = default)
     {
