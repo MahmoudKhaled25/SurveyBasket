@@ -32,7 +32,7 @@ public class QuestionService(ApplicationDbContext context) : IQuestionService
         if (hasVote)
             return Result.Failure<IEnumerable<QuestionResponse>>(VoteErrors.DuplicatedVote);
 
-        var pollIsExist = await _context.Polls.AnyAsync(x => x.Id == PollId && x.isPublished && x.StartsAt <= DateOnly.FromDateTime(DateTime.UtcNow) && x.EndsAt >= DateOnly.FromDateTime(DateTime.UtcNow),cancellationToken);
+        var pollIsExist = await _context.Polls.AnyAsync(x => x.Id == PollId && x.IsPublished && x.StartsAt <= DateOnly.FromDateTime(DateTime.UtcNow) && x.EndsAt >= DateOnly.FromDateTime(DateTime.UtcNow),cancellationToken);
         if(!pollIsExist)
             return Result.Failure<IEnumerable<QuestionResponse>>(PollErrors.PollNotFound);
 

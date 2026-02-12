@@ -7,7 +7,7 @@ public sealed class Poll : AuditableEntity
     public string Title { get; set; } = string.Empty;
 
     public string Summary { get; set; } = string.Empty;
-    public bool isPublished { get; set; }
+    public bool IsPublished { get; set; }
     public DateOnly StartsAt { get; set; } 
     public DateOnly EndsAt { get; set; }
 

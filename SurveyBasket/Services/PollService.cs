@@ -12,7 +12,7 @@ public class PollService(ApplicationDbContext context) : IPollService
     public async Task<IEnumerable<PollResponse>> GetAllAsync(CancellationToken cancellationToken = default) => await _context.Polls.AsNoTracking()
                                                                                                                                     .ProjectToType<PollResponse>()
                                                                                                                                     .ToListAsync();
-   public async Task<IEnumerable<PollResponse>> GetCurrentAsync(CancellationToken cancellationToken = default) => await _context.Polls.Where(x => x.isPublished && x.StartsAt <= DateOnly.FromDateTime(DateTime.UtcNow) && x.EndsAt >= DateOnly.FromDateTime(DateTime.UtcNow))
+   public async Task<IEnumerable<PollResponse>> GetCurrentAsync(CancellationToken cancellationToken = default) => await _context.Polls.Where(x => x.IsPublished && x.StartsAt <= DateOnly.FromDateTime(DateTime.UtcNow) && x.EndsAt >= DateOnly.FromDateTime(DateTime.UtcNow))
                                                                                                                                     .AsNoTracking()
                                                                                                                                     .ProjectToType<PollResponse>()
                                                                                                                                     .ToListAsync();
@@ -78,9 +78,9 @@ public class PollService(ApplicationDbContext context) : IPollService
         if (currentPoll == null)
             return Result.Failure(PollErrors.PollNotFound);
 
-        currentPoll.isPublished = !currentPoll.isPublished;
+        currentPoll.IsPublished = !currentPoll.IsPublished;
         await _context.SaveChangesAsync(cancellationToken);
-        return Result.Success();
+        return Result.Success(currentPoll.IsPublished);
     }
 
 

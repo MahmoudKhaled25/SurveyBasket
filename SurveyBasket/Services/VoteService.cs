@@ -16,7 +16,7 @@ public class VoteService(ApplicationDbContext context) : IVoteService
         if (hasVote)
             return Result.Failure(VoteErrors.DuplicatedVote);
 
-        var pollIsExist = await _context.Polls.AnyAsync(x => x.Id == pollId && x.isPublished && x.StartsAt <= DateOnly.FromDateTime(DateTime.UtcNow) && x.EndsAt >= DateOnly.FromDateTime(DateTime.UtcNow), cancellationToken);
+        var pollIsExist = await _context.Polls.AnyAsync(x => x.Id == pollId && x.IsPublished && x.StartsAt <= DateOnly.FromDateTime(DateTime.UtcNow) && x.EndsAt >= DateOnly.FromDateTime(DateTime.UtcNow), cancellationToken);
         if (!pollIsExist)
             return Result.Failure(PollErrors.PollNotFound);
 
