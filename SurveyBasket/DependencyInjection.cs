@@ -1,10 +1,12 @@
 ﻿
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.IdentityModel.Tokens;
 using SurveyBasket.Authentication;
 using SurveyBasket.Errors;
 using SurveyBasket.Persistence;
+using SurveyBasket.Settings;
 using System.Text;
 
 namespace SurveyBasket;
@@ -39,6 +41,7 @@ public static class DependencyInjection
             AddFluentValidationConfig();
 
         services.AddScoped<IPollService, PollService>();
+        services.AddScoped<IEmailSender, EmailService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IQuestionService, QuestionService>();
         services.AddScoped<IVoteService, VoteService>();
@@ -46,6 +49,10 @@ public static class DependencyInjection
 
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
+
+        services.AddHttpContextAccessor();
+
+        services.Configure<MailSettings>(configuration.GetSection(nameof(MailSettings)));
         return services;
     }
     private static IServiceCollection AddSwaggerServices(this IServiceCollection services)
