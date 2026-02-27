@@ -41,6 +41,12 @@ app.UseHangfireDashboard("/jobs", new DashboardOptions
     DashboardTitle = "Survey Basket Dashboard"
 });
 
+var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
+using var scope = scopeFactory.CreateScope();
+var notificationService = scope.ServiceProvider.GetRequiredService<INotificationService>();
+
+RecurringJob.AddOrUpdate("SendNewPollsNotification", () => notificationService.SendNewPollsNotification(),Cron.Daily);
+
 app.UseCors();
 app.UseAuthorization();
 
