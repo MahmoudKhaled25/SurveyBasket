@@ -18,7 +18,7 @@ public class PollService(ApplicationDbContext context) : IPollService
                                                                                                                                     .ToListAsync();
 
 
-
+        
 
     public async Task<Result<PollResponse>> GetAsync(int id, CancellationToken cancellationToken = default)
     {

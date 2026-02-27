@@ -19,7 +19,7 @@ public class EmailService(IOptions<MailSettings> mailSettings,ILogger<EmailServi
         {
             Sender = MailboxAddress.Parse(_mailSettings.Mail),
             Subject = subject,
-
+            
         };
         message.To.Add(MailboxAddress.Parse(email));
         var builder = new BodyBuilder

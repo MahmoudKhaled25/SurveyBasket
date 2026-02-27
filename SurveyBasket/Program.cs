@@ -1,4 +1,6 @@
 using FluentValidation.AspNetCore;
+using Hangfire;
+using HangfireBasicAuthenticationFilter;
 using Serilog;
 using SurveyBasket;
 using SurveyBasket.Persistence;
@@ -25,6 +27,19 @@ if (app.Environment.IsDevelopment())
 }
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
+
+
+app.UseHangfireDashboard("/jobs", new DashboardOptions
+{
+    Authorization = [
+        new HangfireCustomBasicAuthenticationFilter
+        {
+            User = app.Configuration.GetValue<string>("HangfireSettings:Username"),
+            Pass = app.Configuration.GetValue<string>("HangfireSettings:Password")
+        }
+        ],
+    DashboardTitle = "Survey Basket Dashboard"
+});
 
 app.UseCors();
 app.UseAuthorization();
