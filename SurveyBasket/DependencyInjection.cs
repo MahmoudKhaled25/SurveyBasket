@@ -41,12 +41,14 @@ public static class DependencyInjection
             .AddMapsterConfig().
             AddFluentValidationConfig();
 
-        services.AddScoped<IPollService, PollService>();
-        services.AddScoped<IEmailSender, EmailService>();
         services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<IQuestionService, QuestionService>();
-        services.AddScoped<IVoteService, VoteService>();
+        services.AddScoped<IEmailSender, EmailService>();
+        services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<IPollService, PollService>();
         services.AddScoped<IResultService, ResultService>();
+        services.AddScoped<IVoteService, VoteService>();
+        services.AddScoped<IQuestionService, QuestionService>();
+
 
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
