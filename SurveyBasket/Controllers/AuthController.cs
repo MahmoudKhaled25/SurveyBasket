@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using SurveyBasket.Authentication;
 using SurveyBasket.Contracts.Authentication;
 using LoginRequest = SurveyBasket.Contracts.Authentication.LoginRequest;
+using ResetPasswordRequest = SurveyBasket.Contracts.Authentication.ResetPasswordRequest;
 
 namespace SurveyBasket.Controllers;
 
@@ -43,7 +44,7 @@ public class AuthController(IAuthService authService,ILogger<AuthController> log
         return result.IsSuccess ? Ok() : result.ToProblem();
     }
     [HttpPost("confirm-email")]
-    public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailRequest request)
+    public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailRequest request,CancellationToken cancellationToken)
     {
         var result = await _authService.ConfirmEmailAsync(request);
         return result.IsSuccess ? Ok() : result.ToProblem();
@@ -52,6 +53,18 @@ public class AuthController(IAuthService authService,ILogger<AuthController> log
     public async Task<IActionResult> ResendConfirmationEmail([FromBody] Contracts.Authentication.ResendConfirmationEmailRequest request)
     {
         var result = await _authService.ResendConfirmationEmailAsync(request);
+        return result.IsSuccess ? Ok() : result.ToProblem();
+    }
+    [HttpPost("forget-password")]
+    public async Task<IActionResult> ForgetPassword([FromBody] ForgetPasswordRequest request)
+    {
+        var result = await _authService.SendResetPasswordCodeAsync(request.Email);
+        return result.IsSuccess ? Ok() : result.ToProblem();
+    }
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+    {
+        var result = await _authService.ResetPasswordAsync(request);
         return result.IsSuccess ? Ok() : result.ToProblem();
     }
 
