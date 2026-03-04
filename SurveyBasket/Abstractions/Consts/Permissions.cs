@@ -2,26 +2,26 @@
 
 public static class Permissions
 {
-    public static string Type { get; } = "permission";
+    public static string Type { get; } = "permissions";
 
-    public static string GetPolls = "polls:read";
-    public static string AddPolls = "polls:add";
-    public static string UpdatePolls = "polls:update";
-    public static string DeletePolls = "polls:delete";
+    public const string GetPolls = "polls:read";
+    public const string AddPolls = "polls:add";
+    public const string UpdatePolls = "polls:update";
+    public const string DeletePolls = "polls:delete";
 
-    public static string GetQuestions = "questions:read";
-    public static string AddQuestions = "questions:add";
-    public static string DeleteQuestions = "questions:delete";
+    public const string GetQuestions = "questions:read";
+    public const string AddQuestions = "questions:add";
+    public const string UpdateQuestions = "questions:update";
 
-    public static string GetUsers = "users:read";
-    public static string AddUsers = "users:add";
-    public static string UpdateUsers = "users:update";
+    public const string GetUsers = "users:read";
+    public const string AddUsers = "users:add";
+    public const string UpdateUsers = "users:update";
 
-    public static string GetRole = "role:read";
-    public static string AddRole = "role:add";
-    public static string UpdateRole = "role:update";
+    public const string GetRoles = "roles:read";
+    public const string AddRoles = "roles:add";
+    public const string UpdateRoles = "roles:update";
 
-    public static string Results = "result:read";
+    public const string Results = "results:read";
 
 
 

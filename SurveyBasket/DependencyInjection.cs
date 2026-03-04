@@ -1,10 +1,12 @@
 ﻿
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.IdentityModel.Tokens;
 using SurveyBasket.Authentication;
+using SurveyBasket.Authentication.Filters;
 using SurveyBasket.Errors;
 using SurveyBasket.Persistence;
 using SurveyBasket.Settings;
@@ -98,6 +100,9 @@ public static class DependencyInjection
         services.AddIdentity<ApplicationUser, ApplicationRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
+
+        services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        services.AddTransient<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
 
         services.AddAuthentication(options =>
         {
