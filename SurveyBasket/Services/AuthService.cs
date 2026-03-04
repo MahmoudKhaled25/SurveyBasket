@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.VisualBasic;
 using SurveyBasket.Abstractions;
+using SurveyBasket.Abstractions.Consts;
 using SurveyBasket.Authentication;
 using SurveyBasket.Contracts.Authentication;
 using SurveyBasket.Errors;
@@ -152,6 +153,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
         var result = await _userManager.ConfirmEmailAsync(user, code);
         if (result.Succeeded)
         {
+            await _userManager.AddToRoleAsync(user, DefaultRoles.Member);
             return Result.Success();
         }
         var error = result.Errors.First();
