@@ -2,7 +2,10 @@
 using System.Security.Claims;
 
 namespace SurveyBasket.Persistence;
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,IHttpContextAccessor httpContextAccessor) : IdentityDbContext<ApplicationUser>(options)
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,IHttpContextAccessor httpContextAccessor) : 
+    IdentityDbContext<ApplicationUser,ApplicationRole,string>(options)
+
+
 {
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
@@ -24,6 +27,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         foreach (var fk in cascadeFKs)
             fk.DeleteBehavior = DeleteBehavior.Restrict;
+
+
         
 
         base.OnModelCreating(modelBuilder);
