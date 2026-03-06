@@ -23,4 +23,7 @@ public static class UserErrors
 
     public static readonly Error DuplicatedConfirmation =
   new("User.DuplicatedConfirmation", "Email Already Confirmed", StatusCodes.Status400BadRequest);
+
+    public static readonly Error DisabledUser =
+       new("User.DisabledUser", "Disabled User / Please Contact Your Administrator", StatusCodes.Status401Unauthorized);
 }
