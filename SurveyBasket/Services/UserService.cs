@@ -1,12 +1,40 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using SurveyBasket.Abstractions.Consts;
 using SurveyBasket.Contracts.Users;
 
 namespace SurveyBasket.Services;
 
-public class UserService(UserManager<ApplicationUser> userManager) : IUserService
+public class UserService(UserManager<ApplicationUser> userManager, ApplicationDbContext context) : IUserService
 {
     private readonly UserManager<ApplicationUser> _userManager = userManager;
+    private readonly ApplicationDbContext _context = context;
 
+    public async Task<IEnumerable<UserResponse>> GetAllUsersAsync(CancellationToken cancellationToken = default) => await (from u in _context.Users
+                                                                                                                           join ur in _context.UserRoles
+                                                                                                                           on u.Id equals ur.UserId
+                                                                                                                           join r in _context.Roles
+                                                                                                                           on ur.RoleId equals r.Id into roles
+                                                                                                                           where !roles.Any(x => x.Name == DefaultRoles.Member)
+                                                                                                                           select new 
+                                                                                                                           { 
+                                                                                                                               u.Id,
+                                                                                                                               u.FirstName,
+                                                                                                                               u.LastName,
+                                                                                                                               u.Email,
+                                                                                                                               u.IsDisabled,
+                                                                                                                             Roles = roles.Select(x => x.Name!).ToList()
+                                                                                                                           })
+                                                                                                                            .GroupBy(u => new { u.Id, u.FirstName, u.LastName, u.Email, u.IsDisabled })
+                                                                                                                            .Select(u => new UserResponse(
+                                                                                                                                u.Key.Id,
+                                                                                                                                u.Key.FirstName,
+                                                                                                                                u.Key.LastName,
+                                                                                                                                u.Key.Email,
+                                                                                                                                u.Key.IsDisabled,
+                                                                                                                                u.SelectMany(x => x.Roles).ToList()
+                                                                                                                                ))
+
+                                                                                                                          .ToListAsync(cancellationToken);
     public async Task<Result<UserProfileResponse>> GetProfileAsync(string userId)
     {
         var user = await _userManager.Users.Where(x => x.Id == userId)
@@ -41,4 +69,6 @@ public class UserService(UserManager<ApplicationUser> userManager) : IUserServic
         return Result.Failure(new Error(error.Code,error.Description,StatusCodes.Status400BadRequest));
 
     }
+
+  
 }
