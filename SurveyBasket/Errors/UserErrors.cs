@@ -29,4 +29,7 @@ public static class UserErrors
 
     public static readonly Error DisabledUser =
        new("User.DisabledUser", "Disabled User / Please Contact Your Administrator", StatusCodes.Status401Unauthorized);
+
+    public static readonly Error UserNotFound =
+   new("User.UserNotFound", "User Not Found", StatusCodes.Status404NotFound);
 }
