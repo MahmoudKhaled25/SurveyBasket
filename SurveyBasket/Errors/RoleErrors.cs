@@ -10,4 +10,6 @@ public static class RoleErrors
 
     public static readonly Error InvalidPermissions =
         new("Role.InvalidPermissions", "Invalid Permissions", StatusCodes.Status400BadRequest);
+
+   
 }
