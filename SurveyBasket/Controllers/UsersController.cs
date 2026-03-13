@@ -46,4 +46,11 @@ public class UsersController(IUserService userService) : ControllerBase
         var result = await _userService.ToggleStatusAsync(id,cancellationToken);
         return result.IsSuccess ? NoContent() : result.ToProblem();
     }
+    [HttpPut("{id}/unlock")]
+    [HasPermission(Permissions.UpdateUsers)]
+    public async Task<IActionResult> Unlock([FromRoute] string id, CancellationToken cancellationToken = default)
+    {
+        var result = await _userService.UnlockAsync(id, cancellationToken);
+        return result.IsSuccess ? NoContent() : result.ToProblem();
+    }
 }
