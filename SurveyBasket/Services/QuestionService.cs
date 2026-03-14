@@ -22,7 +22,7 @@ public class QuestionService(ApplicationDbContext context,HybridCache hybridCach
         if (!isPollExists)
             return Result.Failure<PaginatedList<QuestionResponse>>(PollErrors.PollNotFound);
 
-        var query = _context.Questions.Where(x => x.PollId == PollId)
+        var query = _context.Questions.Where(x => x.PollId == PollId && (string.IsNullOrEmpty(filters.SearchValue) || x.Content.Contains(filters.SearchValue)))
                                                 .Include(x => x.Answers)
                                                 //.Select(q => new QuestionResponse(q.Id
                                                 //                                ,q.Content
