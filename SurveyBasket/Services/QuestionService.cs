@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Hybrid;
 using SurveyBasket.Contracts.Answers;
+using SurveyBasket.Contracts.Common;
 using SurveyBasket.Contracts.Questions;
 using SurveyBasket.Entities;
 using SurveyBasket.Errors;
@@ -15,22 +16,22 @@ public class QuestionService(ApplicationDbContext context,HybridCache hybridCach
     private const string _cachePrefix = "availableQuestions";
 
 
-    public async Task<Result<IEnumerable<QuestionResponse>>> GetAllAsync(int PollId, CancellationToken cancellationToken = default)
+    public async Task<Result<PaginatedList<QuestionResponse>>> GetAllAsync(int PollId,RequestFilters filters, CancellationToken cancellationToken = default)
     {
         var isPollExists = await _context.Polls.AnyAsync(x => x.Id == PollId);
         if (!isPollExists)
-            return Result.Failure<IEnumerable<QuestionResponse>>(PollErrors.PollNotFound);
-        
-        var questions = await _context.Questions.Where(x => x.PollId == PollId)
+            return Result.Failure<PaginatedList<QuestionResponse>>(PollErrors.PollNotFound);
+
+        var query = _context.Questions.Where(x => x.PollId == PollId)
                                                 .Include(x => x.Answers)
                                                 //.Select(q => new QuestionResponse(q.Id
                                                 //                                ,q.Content
                                                 //                                ,q.Answers.Select(a => new AnswerResponse(a.Id,a.Content))))
                                                 .ProjectToType<QuestionResponse>()
-                                                .AsNoTracking()
-                                                .ToListAsync(cancellationToken);
+                                                .AsNoTracking();
 
-        return Result.Success<IEnumerable<QuestionResponse>>(questions);
+        var questions = await PaginatedList<QuestionResponse>.CreateAsync(query, filters.PageNumber, filters.PageSize, cancellationToken);
+        return Result.Success(questions);
     }
     public async Task<Result<IEnumerable<QuestionResponse>>> GetAvaliableAsync(int PollId, string UserId, CancellationToken cancellationToken = default)
     {

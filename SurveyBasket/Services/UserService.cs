@@ -105,7 +105,6 @@ public class UserService(UserManager<ApplicationUser> userManager,IRoleService r
         var error = result.Errors.First();
         return Result.Failure<UserResponse>(new Error(error.Code,error.Description,StatusCodes.Status400BadRequest));
     }
-    
     public async Task<Result> UpdateAsync(string id, UpdateUserRequest request, CancellationToken cancellationToken = default)
     {
         var emailIsExists = await _userManager.Users.AnyAsync(x => x.Email == request.Email && x.Id != id, cancellationToken);
@@ -136,7 +135,6 @@ public class UserService(UserManager<ApplicationUser> userManager,IRoleService r
         var error = result.Errors.First();
         return Result.Failure(new Error(error.Code,error.Description,StatusCodes.Status400BadRequest));
     }
-
     public async Task<Result> ToggleStatusAsync(string id,CancellationToken cancellationToken = default)
     {
        if(await _userManager.FindByIdAsync(id) is not { } user)
@@ -151,7 +149,6 @@ public class UserService(UserManager<ApplicationUser> userManager,IRoleService r
         var error = result.Errors.First();
         return Result.Failure(new Error(error.Code,error.Description,StatusCodes.Status400BadRequest));
     }
-
     public async Task<Result> UnlockAsync(string id, CancellationToken cancellationToken = default)
     {
         if (await _userManager.FindByIdAsync(id) is not { } user)
