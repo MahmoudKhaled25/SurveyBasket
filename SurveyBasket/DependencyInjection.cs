@@ -62,6 +62,10 @@ public static class DependencyInjection
         services.AddHttpContextAccessor();
 
         services.Configure<MailSettings>(configuration.GetSection(nameof(MailSettings)));
+
+        services.AddHealthChecks()
+            .AddSqlServer(name: "database", connectionString: connectionString)
+            .AddHangfire(options => { options.MinimumAvailableServers = 1; });
         return services;
     }
     private static IServiceCollection AddSwaggerServices(this IServiceCollection services)

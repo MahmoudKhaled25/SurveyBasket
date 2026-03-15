@@ -4,6 +4,8 @@ using HangfireBasicAuthenticationFilter;
 using Serilog;
 using SurveyBasket;
 using SurveyBasket.Persistence;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using HealthChecks.UI.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,5 +55,6 @@ app.UseAuthorization();
 //app.MapIdentityApi<ApplicationUser>();
 
 app.MapControllers();
+app.MapHealthChecks("health",new HealthCheckOptions { ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse});
 app.UseExceptionHandler();
 app.Run();
