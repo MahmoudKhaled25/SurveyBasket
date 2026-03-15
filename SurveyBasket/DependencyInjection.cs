@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using SurveyBasket.Authentication;
 using SurveyBasket.Authentication.Filters;
 using SurveyBasket.Errors;
+using SurveyBasket.Health;
 using SurveyBasket.Persistence;
 using SurveyBasket.Settings;
 using System.Text;
@@ -65,7 +66,8 @@ public static class DependencyInjection
 
         services.AddHealthChecks()
             .AddSqlServer(name: "database", connectionString: connectionString)
-            .AddHangfire(options => { options.MinimumAvailableServers = 1; });
+            .AddHangfire(options => { options.MinimumAvailableServers = 1; })
+            .AddCheck<MailProviderHealthCheck>(name : "Mail Provider");
         return services;
     }
     private static IServiceCollection AddSwaggerServices(this IServiceCollection services)
