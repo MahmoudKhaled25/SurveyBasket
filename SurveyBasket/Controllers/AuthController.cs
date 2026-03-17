@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
+using SurveyBasket.Abstractions.Consts;
 using SurveyBasket.Authentication;
 using SurveyBasket.Contracts.Authentication;
 using LoginRequest = SurveyBasket.Contracts.Authentication.LoginRequest;
@@ -11,6 +13,7 @@ namespace SurveyBasket.Controllers;
 
 [Route("[controller]")]
 [ApiController]
+[EnableRateLimiting(RateLimitingConsts.ipLimiter)]
 public class AuthController(IAuthService authService,ILogger<AuthController> logger) : ControllerBase
 {
     private readonly IAuthService _authService = authService;
@@ -67,5 +70,6 @@ public class AuthController(IAuthService authService,ILogger<AuthController> log
         var result = await _authService.ResetPasswordAsync(request);
         return result.IsSuccess ? Ok() : result.ToProblem();
     }
+
 
 }

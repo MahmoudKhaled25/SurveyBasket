@@ -1,5 +1,6 @@
 ﻿using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 using SurveyBasket.Abstractions.Consts;
 using SurveyBasket.Authentication.Filters;
 using SurveyBasket.Contracts.Polls;
@@ -9,6 +10,7 @@ namespace SurveyBasket.Controllers;
 
 [Route("api/[controller]")]  //api/polls
 [ApiController]
+[EnableRateLimiting(RateLimitingConsts.userLimiter)]
 public class PollsController(IPollService pollService) : ControllerBase
 {
     private readonly IPollService _pollService = pollService;
