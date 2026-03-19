@@ -15,13 +15,15 @@ public class PollService(ApplicationDbContext context,INotificationService notif
     public async Task<IEnumerable<PollResponse>> GetAllAsync(CancellationToken cancellationToken = default) => await _context.Polls.AsNoTracking()
                                                                                                                                     .ProjectToType<PollResponse>()
                                                                                                                                     .ToListAsync();
-   public async Task<IEnumerable<PollResponse>> GetCurrentAsync(CancellationToken cancellationToken = default) => await _context.Polls.Where(x => x.IsPublished && x.StartsAt <= DateOnly.FromDateTime(DateTime.UtcNow) && x.EndsAt >= DateOnly.FromDateTime(DateTime.UtcNow))
+   public async Task<IEnumerable<PollResponse>> GetCurrentAsyncV1(CancellationToken cancellationToken = default) => await _context.Polls.Where(x => x.IsPublished && x.StartsAt <= DateOnly.FromDateTime(DateTime.UtcNow) && x.EndsAt >= DateOnly.FromDateTime(DateTime.UtcNow))
                                                                                                                                     .AsNoTracking()
                                                                                                                                     .ProjectToType<PollResponse>()
                                                                                                                                     .ToListAsync();
 
-
-        
+    public async Task<IEnumerable<PollResponseV2>>GetCurrentAsyncV2(CancellationToken cancellationToken = default) => await _context.Polls.Where(x => x.IsPublished && x.StartsAt <= DateOnly.FromDateTime(DateTime.UtcNow) && x.EndsAt >= DateOnly.FromDateTime(DateTime.UtcNow))
+                                                                                                                             .AsNoTracking()
+                                                                                                                             .ProjectToType<PollResponseV2>()
+                                                                                                                             .ToListAsync();
 
     public async Task<Result<PollResponse>> GetAsync(int id, CancellationToken cancellationToken = default)
     {

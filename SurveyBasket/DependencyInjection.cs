@@ -1,4 +1,5 @@
 ﻿
+using Asp.Versioning;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -73,6 +74,18 @@ public static class DependencyInjection
             .AddCheck<MailProviderHealthCheck>(name : "Mail Provider");
 
         services.AddRateLimitConfig();
+        services.AddApiVersioning(options =>
+        {
+            //options.ApiVersionReader = new HeaderApiVersionReader("x-api-version");
+            options.ApiVersionReader = new UrlSegmentApiVersionReader();
+            options.ReportApiVersions = true;
+            options.DefaultApiVersion = new ApiVersion(1);
+            options.AssumeDefaultVersionWhenUnspecified = true;
+        }).AddApiExplorer(options =>
+        {
+                options.GroupNameFormat = "'v'V";
+                options.SubstituteApiVersionInUrl = true;
+        });
 
         return services;
         
@@ -162,7 +175,6 @@ public static class DependencyInjection
 
         return services;    
     }
-
     private static IServiceCollection AddRateLimitConfig(this IServiceCollection services)
     {
         services.AddRateLimiter(rateLimiterOptions =>
