@@ -14,7 +14,7 @@ public class RolesController(IRoleService roleService) : ControllerBase
 
     [HttpGet]
     [HasPermission(Permissions.GetRoles)]
-    public async Task<IActionResult> GetAllRoles([FromQuery] bool? includeDisabled, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAllRoles([FromQuery] bool includeDisabled, CancellationToken cancellationToken)
     {
         var roles = await _roleService.GetAllRolesAsync(includeDisabled, cancellationToken);
         return Ok(roles);

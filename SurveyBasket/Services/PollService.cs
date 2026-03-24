@@ -57,12 +57,9 @@ public class PollService(ApplicationDbContext context,INotificationService notif
         {
             return Result.Failure(PollErrors.PollNotFound);
         }
-        currentPoll.Title = request.Title;
-        currentPoll.Summary = request.Summary;
-        currentPoll.StartsAt = request.StartsAt;
-        currentPoll.EndsAt = request.EndsAt;
+        currentPoll = request.Adapt(currentPoll);
 
-      await  _context.SaveChangesAsync(cancellationToken);
+        await  _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
