@@ -1,5 +1,5 @@
-﻿
-using Asp.Versioning;
+﻿using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -12,6 +12,7 @@ using SurveyBasket.Authentication;
 using SurveyBasket.Authentication.Filters;
 using SurveyBasket.Errors;
 using SurveyBasket.Health;
+using SurveyBasket.OpenApiTransformers;
 using SurveyBasket.Persistence;
 using SurveyBasket.Settings;
 using System.Text;
@@ -44,7 +45,7 @@ public static class DependencyInjection
         services.AddDbContext<ApplicationDbContext>(option => option.UseSqlServer(connectionString));
 
         services
-            .AddSwaggerServices()
+            //.AddSwaggerServices()
             .AddMapsterConfig().
             AddFluentValidationConfig();
 
@@ -87,16 +88,35 @@ public static class DependencyInjection
                 options.SubstituteApiVersionInUrl = true;
         });
 
+        services.AddEndpointsApiExplorer()
+            .AddOpenApiServices();
+
         return services;
         
     }
-    private static IServiceCollection AddSwaggerServices(this IServiceCollection services)
+    private static IServiceCollection AddOpenApiServices(this IServiceCollection services)
     {
-        // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-        services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen(); 
+        var serviceProvider = services.BuildServiceProvider();
+        var apiVersionDescriptionProvider = serviceProvider.GetRequiredService<IApiVersionDescriptionProvider>();
+
+        foreach(var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
+        {
+            services.AddOpenApi(description.GroupName,options =>
+            {
+                options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+                options.AddDocumentTransformer(new ApiVersioningTransformer(description));
+            });
+        }
+
         return services;
-    }   
+    }
+
+    //private static IServiceCollection AddSwaggerServices(this IServiceCollection services)
+    //{
+    //    // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+    //    services.AddSwaggerGen(); 
+    //    return services;
+    //}   
     private static IServiceCollection AddMapsterConfig(this IServiceCollection services)
     {
         // add mappster
