@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using SurveyBasket.Abstractions.Consts;
 using SurveyBasket.Helpers;
 
 namespace SurveyBasket.Services;
@@ -29,10 +30,10 @@ public class NotificationService(ApplicationDbContext context,
             polls = await _context.Polls.Where(x => x.IsPublished && x.StartsAt == DateOnly.FromDateTime(DateTime.UtcNow)).AsNoTracking().ToListAsync();
         }
 
-        // To Do : Select Members Only
 
 
-        var users = await _userManager.Users.ToListAsync();
+
+        var users = await _userManager.GetUsersInRoleAsync(DefaultRoles.Member);
 
         var origin = _httpContextAccessor.HttpContext?.Request.Headers.Origin;
 
