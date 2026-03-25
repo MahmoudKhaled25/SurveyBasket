@@ -33,7 +33,7 @@ public class NotificationService(ApplicationDbContext context,
 
 
 
-        var users = await _userManager.GetUsersInRoleAsync(DefaultRoles.Member);
+        var users = await _userManager.GetUsersInRoleAsync(DefaultRoles.Member.Name);
 
         var origin = _httpContextAccessor.HttpContext?.Request.Headers.Origin;
 

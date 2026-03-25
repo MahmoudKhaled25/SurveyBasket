@@ -67,7 +67,10 @@ public static class DependencyInjection
         services.AddBackgroundJobsConfig(configuration);
         services.AddHttpContextAccessor();
 
-        services.Configure<MailSettings>(configuration.GetSection(nameof(MailSettings)));
+        services.AddOptions<MailSettings>()
+            .BindConfiguration(nameof(MailSettings))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
         services.AddHealthChecks()
             .AddSqlServer(name: "database", connectionString: connectionString)

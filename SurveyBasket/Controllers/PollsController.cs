@@ -25,14 +25,14 @@ public class PollsController(IPollService pollService) : ControllerBase
 
     [MapToApiVersion(1)]
     [HttpGet("current")]
-    [Authorize(Roles = DefaultRoles.Member)]
+    [Authorize(Roles = DefaultRoles.Member.Name)]
     [EnableRateLimiting(RateLimitingConsts.userLimiter)]
     public async Task<IActionResult> GetCurrentV1(CancellationToken cancellationToken) => Ok(await _pollService.GetCurrentAsyncV1(cancellationToken));
 
 
     [MapToApiVersion(2)]    
     [HttpGet("current")]
-    [Authorize(Roles = DefaultRoles.Member)]
+    [Authorize(Roles = DefaultRoles.Member.Name)]
     [EnableRateLimiting(RateLimitingConsts.userLimiter)]
     public async Task<IActionResult> GetCurrentV2(CancellationToken cancellationToken) => Ok(await _pollService.GetCurrentAsyncV2(cancellationToken));
 
