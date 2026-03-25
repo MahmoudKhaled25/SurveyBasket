@@ -1,4 +1,5 @@
-﻿using SurveyBasket.Abstractions.Consts;
+﻿
+using SurveyBasket.Abstractions.Consts;
 
 namespace SurveyBasket.Contracts.Authentication;
 
